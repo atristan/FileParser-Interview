@@ -1,6 +1,6 @@
-﻿namespace FileParser
+﻿namespace FileParser.Entities
 {
-    public class Address
+    public class OrderAddress
     {
         public int Idx { get; set; }
         public int CustomerIdx { get; set; }
@@ -10,6 +10,6 @@
         public string State { get; set; }
         public string Zip { get; set; }
         public bool Processed { get; set; }
-        public string ErrorMessage { get; set; }
+        public Exception Error { get; set; }
     }
 }

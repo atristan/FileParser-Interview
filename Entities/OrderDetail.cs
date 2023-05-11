@@ -1,4 +1,4 @@
-﻿namespace FileParser
+﻿namespace FileParser.Entities
 {
     public class OrderDetail
     {
@@ -9,5 +9,6 @@
         public decimal CostEach { get; set; }
         public decimal TotalCost { get; set; }
         public string Description { get; set; }
+        public Error OrderDetailError { get; set; }
     }
 }
