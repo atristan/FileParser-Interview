@@ -36,8 +36,6 @@ namespace FileParser
                     Success = true,
                     Processed = true,
                 };
-
-                //Console.WriteLine(orderHeader.ToString());
             }
             catch (Exception ex)
             {
@@ -45,13 +43,13 @@ namespace FileParser
             }
         }
 
-        private static void ParseOrderDetail(string line)
+        public void ParseOrderDetail(string line)
         {
-            CurrentOrderDetails ??= new List<OrderDetail>();
+            Details ??= new List<OrderDetail>();
 
             try
             {
-                CurrentOrderDetails.Add(new OrderDetail()
+                Details.Add(new OrderDetail()
                 {
                     LineNumber = int.Parse(line.Substring(3, 2).Trim()),
                     Quantity = int.Parse(line.Substring(5, 5).Trim()),
@@ -66,11 +64,11 @@ namespace FileParser
             }
         }
 
-        private static void ParseOrderAddress(string line)
+        public void ParseOrderAddress(string line)
         {
             try
             {
-                CurrentAddress = new OrderAddress()
+                Address = new OrderAddress()
                 {
                     AddressLine1 = line.Substring(3, 50).Trim(),
                     AddressLine2 = line.Substring(53, 50).Trim(),
@@ -86,16 +84,16 @@ namespace FileParser
 
         }
 
-        private static void GenerateErrorEntry(string line, Exception ex)
+        public void GenerateErrorEntry(string line, Exception ex)
         {
-            Errors.Add(new OrderError()
+            Error = new OrderError()
             {
                 Success = false,
                 ErrorDate = DateTime.Now,
                 ErrorMessage = $"Message:  {ex.Message}{Environment.NewLine}Source:  {ex.Source}{Environment.NewLine}Target Site:  {ex.TargetSite}",
-                Line = line
-
-            });
+                Line = line,
+                Ex = ex
+            };
         }
 
         #endregion

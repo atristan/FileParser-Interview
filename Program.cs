@@ -7,52 +7,57 @@ namespace FileParser // Note: actual namespace depends on the project name.
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("Hello.  Please provide the path of the file you'd like to parse:");
-
+            var directoryPath = PrintTitleScreen();
             try
             {
-                Order.ParseFile(Console.ReadLine() ?? throw new InvalidOperationException("You must provide a valid path."));
+                ParseFiles(Path.GetFullPath(directoryPath) ?? throw new InvalidOperationException("Please provide a valid path."));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.Clear();
-                Console.WriteLine(e.Message);
-                Order.ParseFile(Console.ReadLine());
-            }
-
-            foreach (var order in Orders)
-            {
-                Console.WriteLine(
-                        $"Order:  {order.CustomerName}, Total:  {order.TotalCost}, Total Items:  {order.TotalItems}"
-                    );
+                directoryPath = PrintTitleScreen();
             }
         }
 
-        public static void ParseFile(string filePath)
+        public static string? PrintTitleScreen()
         {
-            using var sr = new StreamReader(filePath);
-            while (sr.ReadLine() is { } line)
+            Console.WriteLine("WELCOME TO THE FILE PARSER");
+            Console.Write("Please enter the directory for the order files:  ");
+            return Console.ReadLine();
+        }
+
+        public static void ParseFiles(string filePath)
+        {
+            var files = Directory.GetFiles(filePath);
+
+            foreach (var file in files)
             {
-                if (line.Length >= 3)
+                using var sr = new StreamReader(file);
+                while (sr.ReadLine() is { } line)
                 {
-                    var lineType = int.Parse(line[..3]);
-                    switch (lineType)
+                    if (line.Length >= 3)
                     {
-                        case 100:
-                            ParseOrder(line);
-                            break;
-                        case 200:
-                            ParseAddress(line);
-                            break;
-                        case 300:
-                            ParseOrderDetail(line);
-                            break;
-                        default:
-                            GenerateErrorEntry(line, new InvalidOperationException("There was an unspecified error in this line."));
-                            break;
+                        var lineType = int.Parse(line[..3]);
+                        switch (lineType)
+                        {
+                            case 100:
+                                ParseOrder(line);
+                                break;
+                            case 200:
+                                ParseAddress(line);
+                                break;
+                            case 300:
+                                ParseOrderDetail(line);
+                                break;
+                            default:
+                                GenerateErrorEntry(line, new InvalidOperationException("There was an unspecified error in this line."));
+                                break;
+                        }
                     }
                 }
             }
+
+            
         }
     }
 }
