@@ -9,6 +9,6 @@
         public decimal CostEach { get; set; }
         public decimal TotalCost { get; set; }
         public string Description { get; set; }
-        public Error OrderDetailError { get; set; }
+        public OrderError OrderDetailOrderError { get; set; }
     }
 }

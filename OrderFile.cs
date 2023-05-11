@@ -3,7 +3,7 @@ using FileParser.Entities;
 
 namespace FileParser
 {
-    public class Order
+    public class OrderFile
     {
         #region Properties
 

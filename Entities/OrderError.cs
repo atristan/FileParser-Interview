@@ -1,6 +1,6 @@
 ﻿namespace FileParser.Entities
 {
-    public class Error
+    public class OrderError
     {
         public bool Success { get; set; }
         public DateTime ErrorDate { get; set; }
