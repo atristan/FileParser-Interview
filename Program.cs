@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using FileParser.Entities;
+﻿using FileParser.Entities;
 
 namespace FileParser // Note: actual namespace depends on the project name.
 {
@@ -23,7 +22,6 @@ namespace FileParser // Note: actual namespace depends on the project name.
                     Console.WriteLine(ex.Message);
                     Console.WriteLine("Please try again....hit any key to try again.");
                     Console.ReadLine();
-
                 }
             }
         }
