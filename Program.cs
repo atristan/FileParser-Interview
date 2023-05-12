@@ -7,57 +7,40 @@ namespace FileParser // Note: actual namespace depends on the project name.
     {
         private static void Main(string[] args)
         {
+            var orders = new List<Order>();
             var directoryPath = PrintTitleScreen();
+
             try
             {
-                ParseFiles(Path.GetFullPath(directoryPath) ?? throw new InvalidOperationException("Please provide a valid path."));
+                orders = OrderProcessor.ParseFiles(Path.GetFullPath(directoryPath) ?? throw new InvalidOperationException("Please provide a valid path."));
+
+                
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Console.Clear();
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Please try again....hit any key to try again.");
+                Console.Read();
+                //Console.Clear();
                 directoryPath = PrintTitleScreen();
+                orders = OrderProcessor.ParseFiles(Path.GetFullPath(directoryPath));
             }
         }
 
         public static string? PrintTitleScreen()
         {
+            Console.Clear();
             Console.WriteLine("WELCOME TO THE FILE PARSER");
             Console.Write("Please enter the directory for the order files:  ");
             return Console.ReadLine();
         }
 
-        public static void ParseFiles(string filePath)
-        {
-            var files = Directory.GetFiles(filePath);
-
-            foreach (var file in files)
-            {
-                using var sr = new StreamReader(file);
-                while (sr.ReadLine() is { } line)
-                {
-                    if (line.Length >= 3)
-                    {
-                        var lineType = int.Parse(line[..3]);
-                        switch (lineType)
-                        {
-                            case 100:
-                                ParseOrder(line);
-                                break;
-                            case 200:
-                                ParseAddress(line);
-                                break;
-                            case 300:
-                                ParseOrderDetail(line);
-                                break;
-                            default:
-                                GenerateErrorEntry(line, new InvalidOperationException("There was an unspecified error in this line."));
-                                break;
-                        }
-                    }
-                }
-            }
-
-            
-        }
+        //public static void PrintResults(List<Order> orders)
+        //{
+        //    foreach (var order in orders)
+        //    {
+        //        Console.WriteLine();
+        //    }
+        //}
     }
 }

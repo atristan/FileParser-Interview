@@ -3,25 +3,53 @@ using FileParser.Entities;
 
 namespace FileParser
 {
-    public class OrderFile
+    public static class OrderProcessor
     {
-        #region Properties
-
-        public int Idx { get; set; }
-        public OrderHeader Header { get; set; }
-        public OrderAddress Address { get; set; }
-        public List<OrderDetail> Details { get; set; }
-        public OrderError Error { get; set; }
-
-        #endregion
-
         #region Methods
 
-        public void ParseOrderHeader(string line)
+        public static List<Order> ParseFiles(string filePath)
+        {
+            var orders = new List<Order>();
+            var files = Directory.GetFiles(filePath);
+
+            foreach (var file in files)
+            {
+                using var sr = new StreamReader(file);
+                while (sr.ReadLine() is { } line)
+                {
+                    Order currentOrder = null;
+
+                    if (line.Length >= 3)
+                    {
+                        var lineType = int.Parse(line[..3]);
+                        switch (lineType)
+                        {
+                            case 100:
+                                currentOrder = new Order();
+                                ParseOrderHeader(line);
+                                break;
+                            case 200:
+                                ParseOrderAddress(line);
+                                break;
+                            case 300:
+                                ParseOrderDetail(line);
+                                break;
+                            default:
+                                GenerateErrorEntry(line, new InvalidOperationException("There was an unspecified error in this line."));
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return orders;
+        }
+
+        public static OrderHeader ParseOrderHeader(string line)
         {
             try
             {
-                Header = new OrderHeader()
+                return new OrderHeader()
                 {
                     OrderNumber = int.Parse(line.Substring(3, 10).Trim()),
                     TotalItems = int.Parse(line.Substring(13, 5).Trim()),
@@ -40,12 +68,13 @@ namespace FileParser
             catch (Exception ex)
             {
                 GenerateErrorEntry(line, ex);
+                return new OrderHeader();
             }
         }
 
-        public void ParseOrderDetail(string line)
+        public static List<OrderDetail> ParseOrderDetail(string line)
         {
-            Details ??= new List<OrderDetail>();
+            var Details = new List<OrderDetail>();
 
             try
             {
@@ -61,14 +90,17 @@ namespace FileParser
             catch (Exception ex)
             {
                 GenerateErrorEntry(line, ex);
+                return new List<OrderDetail>();
             }
+
+            return Details;
         }
 
-        public void ParseOrderAddress(string line)
+        public static OrderAddress ParseOrderAddress(string line)
         {
             try
             {
-                Address = new OrderAddress()
+                return new OrderAddress()
                 {
                     AddressLine1 = line.Substring(3, 50).Trim(),
                     AddressLine2 = line.Substring(53, 50).Trim(),
@@ -80,13 +112,13 @@ namespace FileParser
             catch (Exception ex)
             {
                 GenerateErrorEntry(line, ex);
+                return new OrderAddress();
             }
-
         }
 
-        public void GenerateErrorEntry(string line, Exception ex)
+        public static OrderError GenerateErrorEntry(string line, Exception ex)
         {
-            Error = new OrderError()
+            return new OrderError()
             {
                 Success = false,
                 ErrorDate = DateTime.Now,
