@@ -7,23 +7,24 @@ namespace FileParser // Note: actual namespace depends on the project name.
     {
         private static void Main(string[] args)
         {
-            var orders = new List<Order>();
-            var directoryPath = PrintTitleScreen();
+            List<Order> orders = new List<Order>();
+            string directoryPath = PrintTitleScreen();
+            OrderProcessor fileProcessor = new OrderProcessor(directoryPath);
 
-            try
+            while (true)
             {
-                orders = OrderProcessor.ParseFiles(Path.GetFullPath(directoryPath) ?? throw new InvalidOperationException("Please provide a valid path."));
+                try
+                {
+                    orders = fileProcessor.ParseFiles(Path.GetFullPath(directoryPath) ?? throw new InvalidOperationException("Please provide a valid path."));
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("Please try again....hit any key to try again.");
+                    Console.ReadLine();
 
-                
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("Please try again....hit any key to try again.");
-                Console.Read();
-                //Console.Clear();
-                directoryPath = PrintTitleScreen();
-                orders = OrderProcessor.ParseFiles(Path.GetFullPath(directoryPath));
+                }
             }
         }
 
@@ -34,13 +35,5 @@ namespace FileParser // Note: actual namespace depends on the project name.
             Console.Write("Please enter the directory for the order files:  ");
             return Console.ReadLine();
         }
-
-        //public static void PrintResults(List<Order> orders)
-        //{
-        //    foreach (var order in orders)
-        //    {
-        //        Console.WriteLine();
-        //    }
-        //}
     }
 }

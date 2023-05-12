@@ -11,7 +11,7 @@ namespace FileParser.Entities
         public int Id { get; set; }
         public OrderHeader Header { get; set; }
         public OrderAddress Address { get; set; }
-        public OrderDetail Detail { get; set; }
+        public List<OrderDetail> Details { get; set; }
         public List<OrderError> Errors { get; set; }
     }
 }
